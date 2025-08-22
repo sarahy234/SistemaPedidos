@@ -1,0 +1,64 @@
+﻿@inject NavigationManager navigationManager
+
+<EditForm Model="@oRegistroVentasCLS" OnValidSubmit="@guardar">
+
+
+    <DataAnnotationsValidator />
+    <div class="mt-3">
+        <label>Numero de Empleado</label>
+        <InputNumber class="form-control" @bind-Value="oRegistroVentasCLS.Num_Empl" />
+        <ValidationMessage For="(() => oRegistroVentasCLS.Num_Empl)" />
+    </div>
+
+
+    <div class="mt-3">
+        <label>Nombre</label>
+        <InputText class="form-control" @bind-Value="oRegistroVentasCLS.Nombre" />
+        <ValidationMessage For="(() => oRegistroVentasCLS.Nombre)" />
+    </div>
+    <div class="mt-3">
+        <label>Cargo</label>
+        <InputText class="form-control" @bind-Value="oRegistroVentasCLS.Cargo" />
+        <ValidationMessage For="(() => oRegistroVentasCLS.Cargo)" />
+    </div>
+
+
+    <div class="mt-3">
+        <label>Fecha de Contrato</label>
+        <InputDate class="form-control" @bind-Value="oRegistroVentasCLS.FechaDeContrato" />
+        <ValidationMessage For="(() => oRegistroVentasCLS.FechaDeContrato)" />
+    </div>
+
+
+    <div class="mt-3">
+        <label>Cuota</label>
+        <InputNumber class="form-control" @bind-Value="oRegistroVentasCLS.Cuota" />
+        <ValidationMessage For="(() => oRegistroVentasCLS.Cuota)" />
+    </div>
+
+
+    <div class="mt-3">
+        <label>Ventas</label>
+        <InputNumber class="form-control" @bind-Value="oRegistroVentasCLS.Ventas" />
+        <ValidationMessage For="(() => oRegistroVentasCLS.Ventas)" />
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <button @onclick="regresar" type="submit" class="btn btn-danger">Regresar</button>
+    </div>
+
+</EditForm>
+@code {
+    public RegistroVentasCLS oRegistroVentasCLS { get; set; } = new RegistroVentasCLS();
+
+    private void guardar()
+    {
+        Console.WriteLine("guardando");
+    }
+    private void regresar()
+    {
+        navigationManager.NavigateTo("/sistemapedidos1");
+    }
+}
+
