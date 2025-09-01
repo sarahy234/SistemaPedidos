@@ -13,7 +13,7 @@ namespace SistemaPedidos.Entities
         public int edad { get; set; }
         public string? cargo { get; set; }
         public DateOnly fechaDContrato { get; set; }
-        public int couta { get; set; }
+        public int cuota { get; set; }
         public int ventas { get; set; }
     }
 }
