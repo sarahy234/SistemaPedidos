@@ -1,5 +1,6 @@
 ﻿@inject NavigationManager navigationManager
 @inject PedidosService pedidosService
+@inject TipoPedidoService tipoPedidoService
 <h2></h2>
 <EditForm Model="@oRegistroVentasCLS" OnValidSubmit="@guardar">
 
@@ -7,7 +8,7 @@
     <DataAnnotationsValidator />
     <div class="mt-3">
         <label>Numero de Empleado</label>
-        <InputNumber class="form-control" @bind-Value="oRegistroVentasCLS.Num_Empl" />
+        <InputNumber readonly class="form-control" @bind-Value="oRegistroVentasCLS.Num_Empl" />
         <ValidationMessage For="(() => oRegistroVentasCLS.Num_Empl)" />
     </div>
 
@@ -28,6 +29,28 @@
         <ValidationMessage For="(() => oRegistroVentasCLS.Cargo)" />
     </div>
 
+    <div class="mt-3">
+        <label>Seleccione Sucursal</label>
+        <InputSelect class="form-control" @bind-Value="oRegistroVentasCLS.idSucursal">
+            <option value="0">--Seleccione--</option>
+            @foreach (var item in listaTipoPedido)
+            {
+                <option value="@item.idtiposucursal">@item.nombretiposucursal</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="(() => oRegistroVentasCLS.idSucursal)" />
+    </div>
+    <div class="mt-3">
+        <label>Seleccione Director</label>
+        <InputSelect class="form-control" @bind-Value="oRegistroVentasCLS.Director">
+            <option value="0">--Seleccione--</option>
+            @foreach (var item in listaTipoPedido)
+            {
+                <option value="@item.idtipodirector">@item.nombretipodirector</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="(() => oRegistroVentasCLS.Director)" />
+    </div>
 
     <div class="mt-3">
         <label>Fecha de Contrato</label>
@@ -60,8 +83,10 @@
     [Parameter]
     public int num_Empl{ get; set; }
     public string nombre { get; set; } = "";
+    public List<TipoPedidoCLS> listaTipoPedido { get; set; } = new List<TipoPedidoCLS>();
     protected override Task OnInitializedAsync()
     {
+        listaTipoPedido = tipoPedidoService.listarTipoPedidos();
         if (num_Empl == 0) nombre = "agregar nombre";
         else {
             nombre = "editar nombre";
