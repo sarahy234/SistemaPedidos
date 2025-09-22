@@ -1,0 +1,103 @@
+﻿@page "/sistemapedidos2"
+@inject NavigationManager navigationManager
+@inject ClienteService clienteService
+
+<h2>Sistema Clientes</h2>
+<div class="mt-3 mb-3">
+    <button @onclick="NavigateToRegistroVentasForm" class="btn btn-primary">Agregar Clientes</button>
+</div>
+<div class="input-group">
+    <input type="text" class="form-control" placeholder="Ingrese nombre del cliente" aria-label="Recipient’s username with two button addons"
+           @bind-value="nombre"
+           @bind-value:event="oninput">
+
+    <button @onclick="buscar" class="btn btn-outline-dark" type="button">Buscar</button>
+    <button @onclick="limpiar" class="btn btn-outline-danger" type="button">Limpiar</button>
+</div>
+
+
+@if (lista != null && lista.Count != 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Cod Cliente</th>
+                <th>Nombre Cliente</th>
+                <th>Representante</th>
+                <th>Limite</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in lista)
+            {
+                <tr>
+                    <td>@item.</td>
+                    <td>@item.nombre</td>
+                    <td>@item.nombretipodirector</td>
+                    <td>@item.fechaDContrato</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => recuperarNumEmpl(item.num_Empl))">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-through-heart-fill" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M2.854 15.854A.5.5 0 0 1 2 15.5V14H.5a.5.5 0 0 1-.354-.854l1.5-1.5A.5.5 0 0 1 2 11.5h1.793l3.103-3.104a.5.5 0 1 1 .708.708L4.5 12.207V14a.5.5 0 0 1-.146.354zM16 3.5a.5.5 0 0 1-.854.354L14 2.707l-1.006 1.006c.236.248.44.531.6.845.562 1.096.585 2.517-.213 4.092-.793 1.563-2.395 3.288-5.105 5.08L8 13.912l-.276-.182A24 24 0 0 1 5.8 12.323L8.31 9.81a1.5 1.5 0 0 0-2.122-2.122L3.657 10.22a9 9 0 0 1-1.039-1.57c-.798-1.576-.775-2.997-.213-4.093C3.426 2.565 6.18 1.809 8 3.233c1.25-.98 2.944-.928 4.212-.152L13.292 2 12.147.854A.5.5 0 0 1 12.5 0h3a.5.5 0 0 1 .5.5z" />
+                            </svg>
+                        </button>
+                        <button class="btn btn-danger" @onclick="(() => eliminarNumEmpl(item.num_Empl))">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public string nombre { get; set; } = string.Empty;
+    private void buscar()
+    {
+        lista = clienteService.filtrarClientes(nombre);
+    }
+    private void limpiar()
+    {
+        nombre = "";
+        lista = clienteService.filtrarEmpleados(nombre);
+    }
+
+
+    private void NavigateToRegistroVentasForm()
+    {
+        navigationManager.NavigateTo("/formregistro");
+    }
+    public List<PedidoList> lista { get; set; } = new List<PedidoList>();
+
+    //public List<TipoPedidoCLS> listaTipoPedido { get; set; } = new List<TipoPedidoCLS>();
+    protected override Task OnInitializedAsync()
+    {
+        pedidosService.OnSearch += filtrar;
+        lista = pedidosService.listarPedidos();
+        return base.OnInitializedAsync();
+    }
+    private void recuperarNumEmpl(int num_empl)
+    {
+        navigationManager.NavigateTo("/formregistro/edit/" + num_empl);
+    }
+    private void eliminarNumEmpl(int num_empl)
+    {
+        pedidosService.eliminarPedido(num_empl);
+        listarPedidos();
+    }
+    private void listarPedidos()
+    {
+        lista = pedidosService.listarPedidos();
+    }
+    private Task filtrar(string nombre)
+    {
+        lista = pedidosService.filtrarEmpleados(nombre);
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+}

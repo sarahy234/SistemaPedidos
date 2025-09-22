@@ -1,0 +1,73 @@
+﻿@inject NavigationManager navigationManager
+@inject ClienteService clienteService
+@inject TipoClienteService tipoClienteService
+<h2></h2>
+<EditForm Model="@oRegistroClienteCLS" OnValidSubmit="@guardar">
+
+
+    <DataAnnotationsValidator />
+    <div class="mt-3">
+        <label>Codigo Cliente</label>
+        <InputNumber readonly class="form-control" @bind-Value="oRegistroClienteCLS.cod_cli" />
+        <ValidationMessage For="(() => oRegistroClienteCLS.cod_cli)" />
+    </div>
+    <div class="mt-3">
+        <label>Nombre Cliente</label>
+        <InputText class="form-control" @bind-Value="oRegistroClienteCLS.nombre_cli" />
+        <ValidationMessage For="(() => oRegistroClienteCLS.nombre_cli)" />
+    </div>
+    <div class="mt-3">
+        <label>Representante </label>
+        <InputSelect class="form-control" @bind-Value="oRegistroClienteCLS.representante">
+            <option value="0">--Seleccione--</option>
+            @foreach (var item in listaTipoCliente)
+            {
+                <option value="@item.idrepresentante">@item.nombrerepresentante</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="(() => oRegistroClienteCLS.representante)" />
+    </div>
+    <div class="mt-3">
+        <label>Limite de Credito</label>
+        <InputNumber class="form-control" @bind-Value="oRegistroClienteCLS.limiteCredi" />
+        <ValidationMessage For="(() => oRegistroClienteCLS.limiteCredi)" />
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <button @onclick="regresar" type="submit" class="btn btn-danger">Regresar</button>
+    </div>
+
+</EditForm>
+@code {
+    public RegistroCliente oRegistroClienteCLS { get; set; } = new RegistroCliente();
+    [Parameter]
+    public int cod_cli { get; set; }
+    public string nombre_cli { get; set; } = "";
+    public List<TipoClienteCLS> listaTipoCliente { get; set; } = new List<TipoClienteCLS>();
+    protected override Task OnInitializedAsync()
+    {
+        listaTipoCliente = tipoClienteService.listarTipoCliente();
+        if (cod_cli == 0) nombre_cli = "agregar nombre";
+        else
+        {
+            nombre_cli = "editar nombre";
+            oRegistroClienteCLS = clienteService.recuperarClientePorId(cod_cli);
+        }
+        return base.OnInitializedAsync();
+    }
+    private void guardar()
+    {
+        if (nombre_cli == "agregar nombre")
+        {
+            clienteService.guardarCliente(oRegistroClienteCLS);
+            navigationManager.NavigateTo("sistemapedidos2");
+        }
+    }
+    private void regresar()
+    {
+        navigationManager.NavigateTo("/sistemapedidos2");
+    }
+
+}
+
